@@ -6,7 +6,9 @@ class BasicTemplateOptionsAlgorithm(QCAlgorithm):
         self.SetStartDate(2017, 5, 1)
         self.SetEndDate(2017, 8, 30)
         self.SetCash(30000)
+        #for benchmark
         equity = self.AddEquity("GOOG", Resolution.Minute)
+        
         option = self.AddOption("GOOG", Resolution.Minute)
         self.symbol = option.Symbol
 
@@ -16,7 +18,9 @@ class BasicTemplateOptionsAlgorithm(QCAlgorithm):
         self.SetBenchmark(equity.Symbol)
 
     def OnData(self,slice):
+        # option chain is a list of all put and call prices for a given maturity period
         optionchain = slice.OptionChains
+        #search through the slice and find the option chain for "GOOG"
         for i in slice.OptionChains:
             if i.Key != self.symbol: continue
             chains = i.Value
@@ -24,7 +28,7 @@ class BasicTemplateOptionsAlgorithm(QCAlgorithm):
         # if there is no contracts in this optionchain, pass the instance
         if (slice.OptionChains.Count == 0) or (len(contract_list) == 0):
             return
-         # if there is no securities in portfolio, trade the options
+         # if there is no securities in portfolio, trade the option. You only trade options once (YOTOO)
         if not self.Portfolio.Invested:
             self.TradeOptions(optionchain)
 
